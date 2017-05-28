@@ -1,0 +1,19 @@
+[Unit]
+Description=sshguard
+After=network-online.target iptables-restore.service
+Requires=network-online.target
+
+[Service]
+ExecStart=/usr/bin/rkt --insecure-options=image run \
+            --inherit-env \
+            --net=host \
+            --mount volume=dev-log,target=/dev/log --volume dev-log,kind=host,source=/dev/log,readOnly=true \
+            --mount volume=journal,target=/var/log/journal --volume journal,kind=host,source=/var/log/journal \
+            --mount volume=config,target=/var/db/sshguard --volume config,kind=host,source=/var/db/sshguard \
+            docker://chillichef/coreos-sshguard:1.0.0 \
+            --name=%p-service \
+            --caps-retain=CAP_NET_ADMIN,CAP_NET_RAW \
+            -- -a 120 -b 120:/var/db/sshguard/blacklist.db
+
+[Install]
+WantedBy=multi-user.target

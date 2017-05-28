@@ -1,0 +1,27 @@
+[Unit]
+Description=sshguard
+After=network-online.target iptables-restore.service docker.service
+Requires=network-online.target docker.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=/bin/sh -c 'docker ps -a -q --filter "name=%n" | xargs -0 --no-run-if-empty docker rm -f'
+ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker:v0.2.1
+
+ExecStart=/opt/bin/systemd-docker run \
+            --name=%n \
+            --net=host \
+            --cap-add=NET_ADMIN \
+            --cap-add=NET_RAW \
+            -v /dev/log:/dev/log:ro \
+            -v /var/run/systemd/journal/socket:/var/run/systemd/journal/socket \
+            -v /var/log/journal:/var/log/journal:ro \
+            -v /var/db/sshguard/:/var/db/sshguard/ \
+            chillichef/coreos-sshguard:latest \
+            -a 120 -b /var/db/sshguard/blacklist.db
+
+ExecStop=/usr/bin/docker stop %n
+ExecStop=/usr/bin/docker rm %n
+
+[Install]
+WantedBy=multi-user.target
