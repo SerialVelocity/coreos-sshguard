@@ -7,7 +7,7 @@ This will correctly log using as the sshguard unit.
 
 # Installation
 
-Add the ``sshguard.service`` file to your CoreOS installation.
+Add the ``sshguard-docker.service`` or ``sshguard-rkt.service`` file to your CoreOS installation. You probably want to rename it to ``sshguard.service``.
 
 For instance:
 ```yaml
