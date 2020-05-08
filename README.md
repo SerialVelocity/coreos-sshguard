@@ -3,13 +3,13 @@ Dockerised sshguard for CoreOS.
 
 Your iptable must already contain an sshguard chain.
 
-This will correctly log using as the sshguard unit.
+This will correctly log as the sshguard unit.
 
 # Installation
 
-Add the ``sshguard-docker.service`` or ``sshguard-rkt.service`` file to your CoreOS installation. You probably want to rename it to ``sshguard.service``.
+Add one of the ``sshguard-*.service`` files to your CoreOS installation as ``sshguard.service``.
 
-For instance:
+CoreOS:
 ```yaml
 coreos:
   units:
@@ -18,3 +18,19 @@ coreos:
       content: |
         <contents of sshguard.service here>
 ```
+
+Fedora CoreOS:
+```yaml
+systemd:
+  units:
+    - name: sshguard.service
+      enabled: true
+      contents: |
+        <contents of sshguard.service here>
+```
+
+# Configuration
+
+All configuration variables are exposed as environment variables. Check out `start-sshguard.sh` for more information and the defaults.
+
+You can also mount /etc/sshguard/sshguard.conf into the container with your overrides.
