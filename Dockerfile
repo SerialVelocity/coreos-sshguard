@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM debian:unstable-slim
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ipset iptables nftables sshguard systemd tini \
